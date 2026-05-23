@@ -6,9 +6,9 @@ using namespace std;
 void menuBanco() {
 	
 	cout << "---------- BANCO  ----------" << endl;
-	cout << "	1. Visualizar Informações " << endl;
+	cout << "	1. Visualizar Informacoes " << endl;
 	cout << "	2. Fazer Saque	" << endl;
-	cout << "	3. Fazer Depósito	" << endl;
+	cout << "	3. Fazer Deposito	" << endl;
 	cout << "	4. Abrir Conta	" << endl;
 	cout << "	5. Fechar Conta	" << endl;
 	cout << "	6. Pagar Mensalidade	" << endl;
@@ -293,7 +293,7 @@ int main(int argc, char** argv) {
 		
 		menuBanco();
 	
-		cout << "Selecione uma opção: ";
+		cout << "Selecione uma opcao: ";
 		cin >> opcao;
 		
 		cout << endl;
