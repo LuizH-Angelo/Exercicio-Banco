@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -12,7 +13,7 @@ void menuBanco() {
 	cout << "	5. Fechar Conta	" << endl;
 	cout << "	6. Pagar Mensalidade	" << endl;
 	cout << "			0. Sair		" << endl;
-	cout << "----------       ----------"
+	cout << "----------       ----------" << endl;
 }
 
 class ContaBanco {
@@ -35,31 +36,184 @@ class ContaBanco {
 			delete dono;
 			delete saldo;
 			delete status;
+		}
+		
+		void mostrarInfos () {
+			
+			cout << "Nome do Titular: " << *dono << endl;
+			cout << "Numero da Conta: " << *numConta << endl;
+			cout << "Tipo da Conta: " << *tipo << endl;
+			cout << "Saldo Atual: " << *saldo << endl;
+			cout << "Status da Conta ( Aberta ou Fechada ): " << endl;
+			
+			if ( *status == true ) {
+				
+				cout << "Aberta" << endl;
+			}
+			else if ( *status == false ) {
+				
+				cout << "Fechada" << endl;
+			}
 			
 		}
 		
-		void abrirConta() {
+		void abrirConta( string novoTipo, string novoDono ) {
 			
+			if ( *status == true ) {
+				
+				cout << "Você já possui uma conta aberta." << endl;
+				
+				return;
+			}
+			
+			if ( novoTipo == "CC" || novoTipo == "CP" ) {
+			
+				*dono = novoDono;
+					
+				*tipo = novoTipo;
+				*status = true;
+				
+				if ( *tipo == "CC" ) {
+					
+					*saldo = 50;
+				}
+				
+				if ( *tipo == "CP" ) {
+					
+					*saldo = 150;
+				}
+			}
+			
+			else {
+				
+				cout << "Tipo de conta Inválido, utilize apenas as siglas CC ou CP." << endl;
+				
+				*tipo = "Indefinido.";
+				
+				return;
+			}
 			// ao abrir a conta, deve mostrar o tipo. Se for cc, va ter 50 reais na conta, se for cp, vai ter 150 reais na conta
 		}
 		
 		void fecharConta() {
 			
+			if ( *status == false ) {
+				
+				cout << "Você não tem uma conta aberta." << endl;
+				
+				return;
+			}
+			
+			if ( *tipo == "CC" || *tipo == "CP" ) {
+				
+				if( *saldo > 0 ) {
+					
+					cout << "Não é possível fechar a conta, pois ainda há saldo." << endl;
+					
+					return;
+				}
+				
+				if ( *saldo < 0 ) {
+					
+					cout << "Não é possível fechar a conta, pois há dívidas pendentes." << endl;
+					
+					return;
+				}
+				
+				else{
+					
+					*status = false;
+										
+					cout << "Fechando conta." << endl;
+				}
+			}
 			// para fechar a conta, não pode ter saldo ou débito
 		}
 		
-		void depositar() {
+		void depositar( double deposito ) {
 		
+			if ( *status == false ) {
+				
+				cout << "Você não tem uma conta aberta." << endl;
+				
+				return;
+			}
+			
+			if ( deposito > 0 ) {
+				
+				*saldo = *saldo + deposito;
+			}
+			else{ 
+			
+				cout << "O valor zero não pode ser adicionado." << endl;
+				
+				return;
+			}
 			// para fazer depósito em uma conta, ela deve estar aberta ( status verdadeiro ) 
 		}
 		
-		void sacar() {
+		void sacar( double saque ) {
 			
+			if ( *status == false ) {
+				
+				cout << "Você não tem uma conta aberta." << endl;
+				
+				return;
+			}
+			
+			if ( *saldo < saque ) {
+				
+				cout << "Não há saldo suficiente." << endl;
+				
+				return;
+			}
+			
+			*saldo = *saldo - saque;
+			cout << "Saque de R$" << saque << " efetuado com sucesso." << endl << endl;
+				
 			// para fazer saque de uma conta, ela deve estar aberta ( status verdadeiro ) e também preciso ter saldo suficiente
 		}
 		
 		void pagarMensal() {
 			
+			if ( *status == false ) {
+				
+				cout << "Você não tem uma conta aberta." << endl;
+				
+				return;
+			}
+			
+			if ( *status == true && *tipo == "CC" ) {
+				
+				if ( *saldo < 12 ) {
+					
+					cout << "Não há saldo suficiente para pagar a mensalidade." << endl;
+					
+					return;
+				}
+				else{
+					
+					*saldo = *saldo - 12;
+					
+					cout << "O pagamento mensal de R$12,00 foi efetuado com sucesso!" << endl;
+				}
+			}
+			
+			if ( *status == true && *tipo == "CP" ) {
+				
+				if ( *saldo < 20 ) {
+					
+					cout << "Não há saldo suficiente para pagar a mensalidade." << endl;
+					
+					return;
+				}
+				else{ 
+				
+					*saldo = *saldo - 20;
+					
+					cout << "O pagamento mensal de R$20,00 foi efetuado com sucesso!" << endl;
+				}
+			}	
 			// quando o método for chamado, o cliente com cc vai pagar 12 reais de mensalidade, já o cliente com cp vai pagar 20
 		}
 		
@@ -80,20 +234,20 @@ class ContaBanco {
 			return *tipo;
 		}
 		
-		void set_tipo( char askTipo ) {
+		void set_tipo( string askTipo ) {
 			
-			if ( newTipo == "CC" || newTipo == "CP" ) {
+			if ( askTipo == "CC" || askTipo == "CP" ) {
 				
-				*tipo = newTipo
+				*tipo = askTipo;
 			}	
 		}
 		
 		string get_Dono() const {
 			
-			return *nomeDono;
+			return *dono;
 		}
 		
-		void set_Dono( char nomeDono ) {
+		void set_Dono( string nomeDono ) {
 			
 			*dono = nomeDono;
 		}
@@ -113,13 +267,13 @@ class ContaBanco {
 			return *status;
 		}
 		
-		set_Status( bool novoStatus ) {
+		void set_Status( bool novoStatus ) {
 			
-			*status = novoStatus
+			*status = novoStatus;
 		}
 		
 	protected:
-		*string tipo;
+		string* tipo;
 		
 	private:
 		int* numConta;
@@ -131,46 +285,111 @@ class ContaBanco {
 
 int main(int argc, char** argv) {
 	
+	ContaBanco minhaConta;
+	
 	int opcao;
 	
-	menuBanco();
+	do{
+		
+		menuBanco();
 	
-	switch ( opcao ) {
+		cout << "Selecione uma opção: ";
+		cin >> opcao;
 		
-		case 1: {
-			break;
-		}
+		cout << endl;
 		
-		case 2: {
+		switch ( opcao ) {
 			
-			break;
-		}
-		
-		case 3: {
+			case 1: {
+				
+				minhaConta.mostrarInfos();
+					
+				break;
+			}
 			
-			break;
-		}
-		
-		case 4:{
+			case 2: {
+				
+				double saque;
+				
+				cout << "Digite o valor que deseja sacar: ";
+				cin >> saque;
+				
+				minhaConta.sacar(saque);
+				
+				cout << "Saldo atual de R$ " <<minhaConta.get_Saldo() << " " << endl;
+				
+				break;
+			}
 			
-			break;
-		}
-		
-		case 5: {
+			case 3: {
+				
+				double deposito;
+				
+				cout << "Digite o valor que deseja depositar: ";
+				cin >> deposito;
+				
+				minhaConta.depositar(deposito);
+				
+				cout << "Saldo atual de R$ " <<minhaConta.get_Saldo() << " " << endl;
+				
+				break;
+			}
 			
-			break;
-		}
+			case 4:{
+				
+				string novoDono;
+				string novoTipo;
 		
-		case 6: {
+				cout << "Digite o tipo da conta: ";
+				cin >> novoTipo;
+				
+				cin.ignore();
+				
+				cout << "Digite o seu nome completo (sem ascentos): ";
+				getline(cin, novoDono);
+				
+				minhaConta.abrirConta(novoTipo, novoDono);
+				
+				cout << minhaConta.get_tipo();
+				cout << minhaConta.get_Dono();
+				
+				break;
+			}
 			
-			break;
-		}
-		
-		case 0: {
+			case 5: {
+				
+				cout << "Verificando..." << endl;
+				
+				minhaConta.fecharConta();
+				
+				break;
+			}
 			
-			break;
-		}
-	}
+			case 6: {
+				
+				cout << "Verificando...";
+				
+				minhaConta.pagarMensal();
+				
+				break;
+			}
+			
+			case 0: {
+				
+				cout << "Saindo..." << endl;
+				
+				break;
+			}
+			
+			default: {
+				
+				cout << "Opcao Invalida." << endl;
+				
+			}
+			
+		} 
+			
+	} while ( opcao != 0 );
 	
 	return 0;
 }
